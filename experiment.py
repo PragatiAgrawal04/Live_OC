@@ -295,7 +295,7 @@ def frag_table(table_number):
 
         with col1:
             output_ce = output_ce.style.set_properties(**{'background-color':'palegreen'})
-            st.dataframe(output_ce)
+            st.dataframe(output_ce.style.format("{'lastPrice':.2%}"))
         with col2:
             output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
             st.dataframe(output_pe)
