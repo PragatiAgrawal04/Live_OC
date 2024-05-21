@@ -226,14 +226,12 @@ def get_dataframe(ticker):
                 # l_thursday_pe = f"{day_pe}-{month_pe}-{year_pe}"
 
                 # (subset_ce (CE))
-                subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)]
-                subset_ce['lastPrice'] = np.round(subset_ce['lastPrice'],2) 
+                subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)] 
                 # print(subset_ce)
                 output_ce = pd.concat([output_ce, subset_ce])
 
                 # (subset_pe (PE))
                 subset_pe = fd_pe[(fd_pe.instrumentType == "PE") & (fd_pe.expiryDate == adjusted_expiry_pe)]
-                subset_pe['lastPrice'] = np.round(subset_pe['lastPrice'],2)
                 # print(subset_pe)
                 output_pe = pd.concat([output_pe, subset_pe])
 
@@ -296,6 +294,7 @@ def frag_table(table_number):
 
         with col1:
             output_ce = output_ce.style.set_properties(**{'background-color':'palegreen'})
+            output_ce['lastPrice'] = np.round(output_ce['lastPrice'],2)
             st.dataframe(output_ce)
         with col2:
             output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
