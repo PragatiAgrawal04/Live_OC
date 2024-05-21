@@ -6,6 +6,7 @@ import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
+from st_aggrid import AgGrid
 st.set_page_config(page_title="Dashboard", layout="wide")
 
 TWO_PERCENT_MARKET_PRICE = 0.0
@@ -305,10 +306,12 @@ def frag_table(table_number):
                                                     'instrumentType':'Instrument'})
         with col3:
             #df = df.style.set_properties(**{'background-color': 'paleturquoise'})
-            st.dataframe(df,column_config = {'Premium %':st.column_config.NumberColumn('Premium %',format="%.2f"),
-                                         '(Premium + SP)%':st.column_config.NumberColumn('(Premium + SP)%',format="%.2f"),
-                                         'Put Ratio':st.column_config.NumberColumn('Put Ratio',format="%.2f"),
-                                         'Put Effective Ratio':st.column_config.NumberColumn('Put Effective Ratio',format="%.2f")})
+            grid = AgGrid(df, enable_sorting=False)
+            st.write(grid)
+            #st.dataframe(df,column_config = {'Premium %':st.column_config.NumberColumn('Premium %',format="%.2f"),
+              #                           '(Premium + SP)%':st.column_config.NumberColumn('(Premium + SP)%',format="%.2f"),
+               #                          'Put Ratio':st.column_config.NumberColumn('Put Ratio',format="%.2f"),
+                #                         'Put Effective Ratio':st.column_config.NumberColumn('Put Effective Ratio',format="%.2f")})
 
         st.write(f'{ticker} LTP:', stock_ltp)
 
