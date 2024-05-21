@@ -194,13 +194,13 @@ def get_dataframe(ticker, exp_date_selected):
 # print(output_ce)
 # print(output_pe)
 def highlight_ratio(s):
-    if s["Premium %"] > 1:
-        if s["Put Ratio"] > 1:
+    if s["CE Premium %"] > 1:
+        if s["PE Premium %"] > 1:
             return ['background-color: paleturquoise'] * len(s)
         else:
             return ['background-color: paleturquoise'] * 2 +['background-color: white'] * 2
     else:
-        if s["Put Ratio"] > 1:
+        if s["PE Premium %"] > 1:
             return ['background-color: white'] * 2 +['background-color: paleturquoise'] * 2
         else:
             return ['background-color: white'] * len(s)
@@ -239,19 +239,20 @@ def frag_table(table_number):
         else:
             fin_len = l2
         matrix = np.zeros((fin_len, 4))
-        df = pd.DataFrame(matrix, columns=["Premium %", "(Premium + SP)%", "Put Ratio", "Put Effective Ratio"])
+        df = pd.DataFrame(matrix, columns=["CE Premium %", "CE (Premium + SP)%", "PE Premium %", "PE (Premium + SP)%"])
 
         for i in range(len(df)):
-            df.at[i, "Premium %"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100,2)
-            df.at[i, "(Premium + SP)%"] = round((((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
-            df.at[i, "Put Ratio"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100,2)
-            df.at[i, "Put Effective Ratio"] = round((((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
+            df.at[i, "CE Premium %"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100,2)
+            df.at[i, "CE (Premium + SP)%"] = round((((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
+            df.at[i, "PE Premium %"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100,2)
+            df.at[i, "PE (Premium + SP)%"] = round((((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
 
         # ************************************************************************************
     col1, col2, col3 = st.columns(3)
 
     with col1:
         #output_ce = output_ce.style.set_table_styles([{'backgroundColor': 'palegreen'}])
+    
         st.dataframe(output_ce, column_config = {'strikePrice':'Strike Price',
                                                 'expiryDate':'Expiry Date',
                                                 'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
