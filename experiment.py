@@ -6,16 +6,17 @@ import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
+
 st.set_page_config(page_title="Dashboard", layout="wide")
 
 TWO_PERCENT_MARKET_PRICE = 0.0
 
-
 exchange = "NSE"
+
 
 def last_thursdays(year):
     exp = []
-    for month in [1,2,3,4,5,6,7,8,9,10,11,12]:
+    for month in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
         if month == 1 or month == 2 or month == 3 or month == 4 or month == 5 or month == 6 or month == 7 or month == 8 or month == 9:
             date = f"{year}-0{month}-01"
         if month == 10 or month == 11 or month == 12:
@@ -36,7 +37,8 @@ def last_thursdays(year):
         exp.append(df_Expiry)
 
     return exp
-    
+
+
 def current_market_price(ticker, exchange):
     url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
 
@@ -58,9 +60,9 @@ def get_dataframe(ticker, exp_date_selected):
             url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
             headers = {"accept-encoding": "gzip, deflate, br, zstd",
                        "accept-language": "en-US,en;q=0.9",
-                       "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36", 
+                       "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                        "cookie": '_ga=GA1.1.1104812566.1715673932; _abck=AC0A6E579954CFC1BA4A76B56A1628F3~0~YAAQUGDQFwrjO5iPAQAAtSa2mguEKyWD8Exi2JMM7SIB2Vaynvo6hqa8bNg8MT8RY9CTsrBk784kyuiRTl22JTL34Xv0jQlwLyVLKPHnUrz4lbSwiTimmq1bMGiUQWw+Em11vzEBdw/G9nug37QlwBEaasEWcpHtnj3w9TWYMZ1eSw6dIlHIh448u9XdqXUuTjkawbtS2XqmlpQ1y6Plv4DpNWtMbPn1HuvQwwpKeHYou7NOryJWI6xpGiw26NrZSKpygwaEQhi40NbFzl3roBGs3ATgZI0k8jEnwtmWx2ZQIc/ca1DL2PYk2bL+sN70TYRaSF0cRtjVeCDp4Ll5rQtkpfNT+cAOhHQDT41OVocXWNzxDl1bEqnt/z+kNXekY/vUpLdSKPWJ4BeILPf1UQoKAU9mfcN3Nqs=~-1~-1~-1; defaultLang=en; nsit=F_N1bdZZS9Qkz_TPXyUgWkOX; nseappid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGkubnNlIiwiYXVkIjoiYXBpLm5zZSIsImlhdCI6MTcxNjI5NDkzNCwiZXhwIjoxNzE2MzAyMTM0fQ.JnFOjHQnE_XtBgwY_5n85-bpL0rrFNx6SELDjLpw1uc; AKA_A2=A; bm_sz=D7A90F0BFCCC1F46AA3C2A0F601D2669~YAAQUGDQF3FBRJiPAQAAJ2MmmxfdgoHjP0Ut4xwnfih7L1onDTrp8foJdXN0cTt/N5D0gUFgQj2ydKb2JoeycwIyNlVWO2GTNKUBvKRUtRuvvg/qYnyuMlJdEwIh3qZhD0mGqB5Jxf/f7iWdxxyodOReqLFVI5cLQGJmAy2G/sORXPYXP9/iIkpWLOsZoIddCae+tvVN/FNzBAYXCVNoHFneJTrOGc3Zp4otphEtOa41tRj/onI/nNVo9HO5L4+Ub7kcRKP4hVNgRwdrBpTp7Jn9CiwKhbi9H5lB8+4aBlgqBjP0SoMF10Y1C1GIceBRXZG/Q6P8W6YBspItdP6EScnSsTiX+koCnEdKRvB/Qi5meehPvkaol9Ojq9BUVHhvFsSOgvmrXitSKh5sPUr31r1+b8qjQ6QAxg==~3618101~4600901; ak_bmsc=30D52A4ABE9A33768AD3A50A99DADA67~000000000000000000000000000000~YAAQUGDQF2xCRJiPAQAAM3AmmxfTByFKzkjdSehqtpXyOzBLq+mUzhPFWYj1GKvCymiD9fscpU2Lv2Rqnt3LiaPqvBRtRdRKwL1nAC6U5rodJbL8+uuLhEToKkwozGxoXlahMTzvZKvI9E4NaeHG/WgGRueSUVNBIIWLx9PpfWkNErvNMBBX+/EXu9ck2Ck+AC3lxPrX4Sc9bOum9AnOz1v73B+39pnsDg+OVonhTIKK9XrWH8opm9f4XzkZhCyB+/WaseXJkLvAxl+CbunH65+r3xlG+aQIk28cV5lRJnSSHRsRSSKNtm31G/fvzAaWW6PgYp7Ah1XHQABbQ+7aSb9jr3L7B0TrScSs0iJ51j1gDkVaQWcY64CqgNBHUpLJ6eSjfWFErAPXborYcfcF2Q6kqlcoBf1tA5fcaEDqt6AFabH0uJvQy9ZswudclYBI+0F4QMsHN4n1cWyHVly4DQ==; RT="z=1&dm=nseindia.com&si=a746dd1a-fbf2-473e-a100-db75208eb944&ss=lwgdou35&sl=1&se=8c&tt=4gf&bcn=%2F%2F17de4c19.akstat.io%2F&ld=50i&nu=kpaxjfo&cl=9uf"; _ga_QJZ4447QD3=GS1.1.1716293913.20.0.1716294946.0.0.0; _ga_87M7PJ3R97=GS1.1.1716293913.23.1.1716294946.0.0.0; bm_sv=935E4FB31074D07F35811B982D909814~YAAQUGDQF35ERJiPAQAAl4kmmxfgrLDZyAjnPQLsCuU2Hpn3hG8rbXnNHYQ7wgYBs/QbNOOi94TyykaD7Mk7uaugPvl7GPtJrZ+qrvdo36ZHo10ZaSssT5rF7nXYl56llq5+gi5aAdUyyNYrUZ2wL6vSZfii7/+WS5RuQXr74HP9kWXilEg/RJxr1vc0lHepypPG9cnEhPxxRiW+qeN/bn1/qIIK9KyG/u1TBc2Not41ZHTGUDWK1wdLUOHcg1aPTWo=~1'
-                      }
+                       }
             session = requests.Session()
             data = session.get(url, headers=headers).json()["records"]["data"]
             ocdata = []
@@ -78,19 +80,13 @@ def get_dataframe(ticker, exp_date_selected):
             # print(df)
 
             expiry_dates = df['expiryDate'].unique().tolist()
-            fin_exp_dates=[]
+            fin_exp_dates = []
             for i in expiry_dates:
                 temp_expiry = datetime.datetime.strptime(i, '%d-%b-%Y')
                 fin_exp_dates.append(temp_expiry.strftime('%d-%m-%Y'))
-           
 
             strikes = df.strikePrice.unique().tolist()
             strike_size = int(strikes[int(len(strikes) / 2) + 1]) - int(strikes[int(len(strikes) / 2)])
-
-
-
-
-
 
             for price in current_market_price(ticker, exchange):
                 two_percent_cmp = price + 0.02 * price
@@ -160,10 +156,9 @@ def get_dataframe(ticker, exp_date_selected):
 
                 adjusted_expiry = exp_date_selected
                 adjusted_expiry_pe = exp_date_selected
-                
 
                 # (subset_ce (CE))
-                subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)] 
+                subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)]
                 # print(subset_ce)
                 output_ce = pd.concat([output_ce, subset_ce])
 
@@ -198,12 +193,14 @@ def highlight_ratio(s):
         if s["PE Premium %"] > 1:
             return ['background-color: paleturquoise'] * len(s)
         else:
-            return ['background-color: paleturquoise'] * 2 +['background-color: white'] * 2
+            return ['background-color: paleturquoise'] * 2 + ['background-color: white'] * 2
     else:
         if s["PE Premium %"] > 1:
-            return ['background-color: white'] * 2 +['background-color: paleturquoise'] * 2
+            return ['background-color: white'] * 2 + ['background-color: paleturquoise'] * 2
         else:
             return ['background-color: white'] * len(s)
+
+
 @st.experimental_fragment
 def frag_table(table_number):
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
@@ -220,9 +217,9 @@ def frag_table(table_number):
     print(date_list)
     c1, c2 = st.columns(2)
     with c1:
-        selected_option = st.selectbox("Share List", share_list, key="share_list"+str(table_number))
+        selected_option = st.selectbox("Share List", share_list, key="share_list" + str(table_number))
     with c2:
-        exp_option = st.selectbox("Expiry Date", date_list, key="exp_list"+str(table_number))
+        exp_option = st.selectbox("Expiry Date", date_list, key="exp_list" + str(table_number))
         if selected_option in share_list:
             ticker = selected_option
             output_ce, output_pe = get_dataframe(ticker, exp_option)
@@ -242,30 +239,29 @@ def frag_table(table_number):
         df = pd.DataFrame(matrix, columns=["CE Premium %", "CE (Premium + SP)%", "PE Premium %", "PE (Premium + SP)%"])
 
         for i in range(len(df)):
-            df.at[i, "CE Premium %"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100,2)
-            df.at[i, "CE (Premium + SP)%"] = round((((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
-            df.at[i, "PE Premium %"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100,2)
-            df.at[i, "PE (Premium + SP)%"] = round((((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
+            df.at[i, "CE Premium %"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100, 2)
+            df.at[i, "CE (Premium + SP)%"] = round(
+                (((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100,
+                2)
+            df.at[i, "PE Premium %"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100, 2)
+            df.at[i, "PE (Premium + SP)%"] = round(
+                (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,
+                2)
 
         # ************************************************************************************
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        #output_ce = output_ce.style.set_table_styles([{'backgroundColor': 'palegreen'}])
-    
-        st.dataframe(output_ce, column_config = {'strikePrice':'Strike Price',
-                                                'expiryDate':'Expiry Date',
-                                                'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
-                                                'instrumentType':'Instrument'})
+        output_ce = output_ce.style.set_properties(**{'background-color': 'palegreen'})
+        output_ce = output_ce.format({'lastPrice': "{:.2f}".format})
+        st.dataframe(output_ce)
     with col2:
-        #output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
-        st.dataframe(output_pe, column_config = {'strikePrice':'Strike Price',
-                                                'expiryDate':'Expiry Date',
-                                                'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
-                                                'instrumentType':'Instrument'})
+        output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
+        output_pe = output_pe.format({'lastPrice': "{:.2f}".format})
+        st.dataframe(output_pe)
     with col3:
         df = df.style.apply(highlight_ratio, axis=1)
-        #df = df.style.format(formatter="{:.2f}".format)
+        df = df.format(formatter="{:.2f}".format)
         st.table(df)
     st.write(f'{ticker} LTP:', stock_ltp)
 
