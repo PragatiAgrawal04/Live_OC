@@ -292,8 +292,8 @@ def frag_table(table_number):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            #output_ce.style.format(precision=2, decimal=".") 
-            st.dataframe(output_ce.style.set_properties(**{'background-color': 'palegreen'}), column_config = {'strikePrice':'Strike Price',
+            output_ce = output_pe.style.set_properties(**{'background-color': 'palegreen'}) 
+            st.dataframe(output_ce, column_config = {'strikePrice':'Strike Price',
                                                     'expiryDate':'Expiry Date',
                                                     'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
                                                     'instrumentType':'Instrument'})
