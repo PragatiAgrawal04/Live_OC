@@ -266,7 +266,8 @@ def frag_table(table_number):
     if selected_option in share_list:
         ticker = selected_option
         output_ce, output_pe = get_dataframe(ticker)
-
+        output_ce['lastPrice'] = np.round(output_ce['lastPrice'],2)
+        output_pe['lastPrice'] = np.round(output_pe['lastPrice'],2)
         ########################################## Stock LTP and Matrix #######################################
         stock_ltp = 0.0
         for price in current_market_price(ticker, exchange):
@@ -284,16 +285,15 @@ def frag_table(table_number):
         df = pd.DataFrame(matrix, columns=["Premium %", "(Premium + SP)%", "Put Ratio", "Put Effective Ratio"])
 
         for i in range(len(df)):
-            df.at[i, "Premium %"] = (output_ce["lastPrice"].iloc[i] / stock_ltp) * 100
-            df.at[i, "(Premium + SP)%"] = (((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100
-            df.at[i, "Put Ratio"] = (output_pe["lastPrice"].iloc[i] / stock_ltp) * 100
-            df.at[i, "Put Effective Ratio"] = (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100
+            df.at[i, "Premium %"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100,2)
+            df.at[i, "(Premium + SP)%"] = round((((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
+            df.at[i, "Put Ratio"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100,2)
+            df.at[i, "Put Effective Ratio"] = round((((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
 
         # ************************************************************************************
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            output_ce['lastPrice'] = pd.round(output_ce['lastPrice'],2)
             output_ce = output_ce.style.set_properties(**{'background-color':'palegreen'})
             st.dataframe(output_ce)
         with col2:
