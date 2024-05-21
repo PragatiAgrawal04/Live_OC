@@ -292,13 +292,12 @@ def frag_table(table_number):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            output_ce.style \
-              .format(precision=2, decimal=".") 
-            st.dataframe(output_ce)
+            output_ce.style.format(precision=2, decimal=".") 
+            st.table(output_ce)
         with col2:
             output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
             output_pe.style.format(precision=2, decimal=".")
-            st.dataframe(output_pe)
+            st.table(output_pe)
         with col3:
             df = df.style.set_properties(**{'background-color': 'paleturquoise'})
             st.table(df)
