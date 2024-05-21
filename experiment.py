@@ -266,8 +266,6 @@ def frag_table(table_number):
     if selected_option in share_list:
         ticker = selected_option
         output_ce, output_pe = get_dataframe(ticker)
-        output_ce['lastPrice'] = np.round(output_ce['lastPrice'],2)
-        output_pe['lastPrice'] = np.round(output_pe['lastPrice'],2)
         ########################################## Stock LTP and Matrix #######################################
         stock_ltp = 0.0
         for price in current_market_price(ticker, exchange):
@@ -294,11 +292,12 @@ def frag_table(table_number):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            output_ce = output_ce.style \
-              .format(precision=2, decimal=".") \
-              .set_properties({'background-color':'palegreen'})
+            output_ce.style \
+              .format(precision=2, decimal=".") 
             st.dataframe(output_ce)
         with col2:
+            output_pe.style \
+              .format(precision=2, decimal=".")
             output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
             st.dataframe(output_pe)
         with col3:
