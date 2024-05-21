@@ -293,7 +293,7 @@ def frag_table(table_number):
 
         with col1:
             output_ce.style.format(precision=2, decimal=".") 
-            st.table(output_ce)
+            st.dataframe(output_ce)
         with col2:
             output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
             output_pe.style.format(precision=2, decimal=".")
