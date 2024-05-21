@@ -206,7 +206,7 @@ def highlight_ratio(s):
             return ['background-color: white'] * len(s)
 @st.experimental_fragment
 def frag_table(table_number):
-   shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
+    shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
     share_list = list(shares["Symbol"])
 
     today_year = datetime.datetime.now().year
