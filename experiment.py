@@ -281,11 +281,11 @@ def frag_table(table_number):
         else:
             fin_len = l2
         matrix = np.zeros((fin_len, 4))
-        df = pd.DataFrame(matrix, columns=["Call Ratio", "Call Effective Ratio", "Put Ratio", "Put Effective Ratio"])
+        df = pd.DataFrame(matrix, columns=["Premium %", "(Premium + SP)%", "Put Ratio", "Put Effective Ratio"])
 
         for i in range(len(df)):
-            df.at[i, "Call Ratio"] = (output_ce["lastPrice"].iloc[i] / stock_ltp) * 100
-            df.at[i, "Call Effective Ratio"] = (((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100
+            df.at[i, "Premium %"] = (output_ce["lastPrice"].iloc[i] / stock_ltp) * 100
+            df.at[i, "(Premium + SP)%"] = (((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100
             df.at[i, "Put Ratio"] = (output_pe["lastPrice"].iloc[i] / stock_ltp) * 100
             df.at[i, "Put Effective Ratio"] = (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100
 
