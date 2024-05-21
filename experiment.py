@@ -304,8 +304,8 @@ def frag_table(table_number):
                                                     'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
                                                     'instrumentType':'Instrument'})
         with col3:
-            df = df.style.set_properties(**{'background-color': 'paleturquoise'})
-            st.table(df.style.format(format = "%.2f"))
+            #df = df.style.set_properties(**{'background-color': 'paleturquoise'})
+            st.table(df.style.format(precision = 2))
 
         st.write(f'{ticker} LTP:', stock_ltp)
 
