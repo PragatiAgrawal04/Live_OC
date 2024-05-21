@@ -11,58 +11,32 @@ st.set_page_config(page_title="Dashboard", layout="wide")
 TWO_PERCENT_MARKET_PRICE = 0.0
 
 
-# get the last thursday of the current month
-def last_thursday_version_2(year, month):
-    if month == 1 or month == 2 or month == 3 or month == 4 or month == 5 or month == 6 or month == 7 or month == 8 or month == 9:
-        date = f"{year}-0{month}-01"
-    if month == 10 or month == 11 or month == 12:
-        date = f"{year}-{month}-01"
-
-    # we have a datetime series in our dataframe...
-    df_Month = pd.to_datetime(date)
-
-    # we can easily get the month's end date:
-    df_mEnd = df_Month + pd.tseries.offsets.MonthEnd(1)
-
-    # Thursday is weekday 3, so the offset for given weekday is
-    offset = (df_mEnd.weekday() - 3) % 7
-
-    # now to get the date of the last Thursday of the month, subtract it from
-    # month end date:
-    df_Expiry = df_mEnd - pd.to_timedelta(offset, unit='D')
-
-    return df_Expiry
-
-
-# get the last thursday of the next month
-def last_thursday(year, month):
-    if month == 12:
-        date = f"{year + 1}-01-01"
-    if month == 1 or month == 2 or month == 3 or month == 4 or month == 5 or month == 6 or month == 7 or month == 8:
-        date = f"{year}-0{month + 1}-01"
-    if month == 9 or month == 10 or month == 11:
-        date = f"{year}-{month + 1}-01"
-
-    # we have a datetime series in our dataframe...
-    df_Month = pd.to_datetime(date)
-
-    # we can easily get the month's end date:
-    df_mEnd = df_Month + pd.tseries.offsets.MonthEnd(1)
-
-    # Thursday is weekday 3, so the offset for given weekday is
-    offset = (df_mEnd.weekday() - 3) % 7
-
-    # now to get the date of the last Thursday of the month, subtract it from
-    # month end date:
-    df_Expiry = df_mEnd - pd.to_timedelta(offset, unit='D')
-
-    return df_Expiry
-
-
-
 exchange = "NSE"
 
+def last_thursdays(year):
+    exp = []
+    for month in [1,2,3,4,5,6,7,8,9,10,11,12]:
+        if month == 1 or month == 2 or month == 3 or month == 4 or month == 5 or month == 6 or month == 7 or month == 8 or month == 9:
+            date = f"{year}-0{month}-01"
+        if month == 10 or month == 11 or month == 12:
+            date = f"{year}-{month}-01"
 
+        # we have a datetime series in our dataframe...
+        df_Month = pd.to_datetime(date)
+
+        # we can easily get the month's end date:
+        df_mEnd = df_Month + pd.tseries.offsets.MonthEnd(1)
+
+        # Thursday is weekday 3, so the offset for given weekday is
+        offset = (df_mEnd.weekday() - 3) % 7
+
+        # now to get the date of the last Thursday of the month, subtract it from
+        # month end date:
+        df_Expiry = df_mEnd - pd.to_timedelta(offset, unit='D')
+        exp.append(df_Expiry)
+
+    return exp
+    
 def current_market_price(ticker, exchange):
     url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
 
@@ -103,8 +77,12 @@ def get_dataframe(ticker):
             # st.range("A1").value = df
             # print(df)
 
-
-
+            expiry_dates = df['expiryDate'].unique().tolist()
+            fin_exp_dates=[]
+            for i in expiry_dates:
+                temp_expiry = datetime.datetime.strptime(i, '%d-%b-%Y')
+                fin_exp_dates.append(temp_expiry.strftime('%d-%m-%Y'))
+           
 
             strikes = df.strikePrice.unique().tolist()
             strike_size = int(strikes[int(len(strikes) / 2) + 1]) - int(strikes[int(len(strikes) / 2)])
@@ -180,50 +158,9 @@ def get_dataframe(ticker):
                     result_expiry_pe = temp_expiry_pe.strftime('%d-%m-%Y')
                     fd_pe.at[i, "expiryDate"] = result_expiry_pe
 
-                # (last thursday (CE))
-                today_year = datetime.datetime.now().year
-                today_month = datetime.datetime.now().month
-                today_day = datetime.datetime.now().day
-                l_thursday = last_thursday_version_2(today_year, today_month)
-
-                # if today is within the last thursday, then we will take current month last thursday as an adjusted_expiry
-                if today_day < l_thursday.day or today_day == l_thursday.day and today_month == l_thursday.month:
-                    adjusted_expiry = last_thursday_version_2(today_year, today_month)
-                    print("in first if")
-                # if today is greater than last thursday, then we will take next month last thursday as an adjusted_expiry
-                if today_day > l_thursday.day and today_month == l_thursday.month:
-                    adjusted_expiry = last_thursday(today_year, today_month)
-                    print("in second if")
-
-                format = '%d-%m-%Y'
-                adjusted_expiry = adjusted_expiry.strftime(format)
-                # year, month, day = str(l_thursday.date()).split("-")
-                # l_thursday = f"{day}-{month}-{year}"
-                # print(l_thursday)
-                # print(l_thursday.date())
-                # print(str(l_thursday.date()))
-                # print(type(l_thursday.date()))
-                # print(type(str(l_thursday.date())))
-
-                # (last thursday (PE))
-                today_year_pe = datetime.datetime.now().year
-                today_month_pe = datetime.datetime.now().month
-                today_day_pe = datetime.datetime.now().day
-                l_thursday_pe = last_thursday_version_2(today_year_pe, today_month_pe)
-
-                # if today is within the last thursday, then we will take current month last thursday as an adjusted_expiry
-                if today_day_pe < l_thursday_pe.day or today_day_pe == l_thursday_pe.day and today_month_pe == l_thursday_pe.month:
-                    adjusted_expiry_pe = last_thursday_version_2(today_year_pe, today_month_pe)
-                    print("in first if")
-                # if today is greater than last thursday, then we will take next month last thursday as an adjusted_expiry
-                if today_day_pe > l_thursday_pe.day and today_month_pe == l_thursday_pe.month:
-                    adjusted_expiry_pe = last_thursday(today_year_pe, today_month_pe)
-                    print("in second if")
-
-                format = '%d-%m-%Y'
-                adjusted_expiry_pe = adjusted_expiry_pe.strftime(format)
-                # year_pe, month_pe, day_pe = str(l_thursday_pe.date()).split("-")
-                # l_thursday_pe = f"{day_pe}-{month_pe}-{year_pe}"
+                adjusted_expiry = exp_date_selected
+                adjusted_expiry_pe = exp_date_selected
+                
 
                 # (subset_ce (CE))
                 subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)] 
@@ -269,19 +206,31 @@ def highlight_ratio(s):
             return ['background-color: white'] * len(s)
 @st.experimental_fragment
 def frag_table(table_number):
-    shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
+   shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
     share_list = list(shares["Symbol"])
-    selected_option = st.selectbox("Share List", share_list, key="share_list"+str(table_number))
 
-    if selected_option in share_list:
-        ticker = selected_option
-        output_ce, output_pe = get_dataframe(ticker)
-        ########################################## Stock LTP and Matrix #######################################
-        stock_ltp = 0.0
-        for price in current_market_price(ticker, exchange):
-            stock_ltp = price
-            break
-
+    today_year = datetime.datetime.now().year
+    exp_date_list = last_thursdays(today_year)
+    date_list = []
+    today_date = datetime.date.today()
+    for i in range(len(exp_date_list)):
+        x = (exp_date_list[i].date() - today_date).days
+        if x > 0:
+            date_list.append(exp_date_list[i].date().strftime('%d-%m-%Y'))
+    print(date_list)
+    c1, c2 = st.columns(2)
+    with c1:
+        selected_option = st.selectbox("Share List", share_list, key="share_list"+str(table_number))
+    with c2:
+        exp_option = st.selectbox("Expiry Date", date_list, key="exp_list"+str(table_number))
+        if selected_option in share_list:
+            ticker = selected_option
+            output_ce, output_pe = get_dataframe(ticker, exp_option)
+            ########################################## Stock LTP and Matrix #######################################
+            stock_ltp = 0.0
+            for price in current_market_price(ticker, exchange):
+                stock_ltp = price
+                break
 
         # ********************************** MATRIX ******************************************
         l1, l2 = len(output_ce), len(output_pe)
