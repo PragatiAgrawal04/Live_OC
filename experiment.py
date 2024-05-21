@@ -227,11 +227,13 @@ def get_dataframe(ticker):
 
                 # (subset_ce (CE))
                 subset_ce = fd[(fd.instrumentType == "CE") & (fd.expiryDate == adjusted_expiry)]
+                subset_ce['lastPrice'] = np.round(subset_ce['lastPrice'],2) 
                 # print(subset_ce)
                 output_ce = pd.concat([output_ce, subset_ce])
 
                 # (subset_pe (PE))
                 subset_pe = fd_pe[(fd_pe.instrumentType == "PE") & (fd_pe.expiryDate == adjusted_expiry_pe)]
+                subset_pe['lastPrice'] = np.round(subset_pe['lastPrice'],2)
                 # print(subset_pe)
                 output_pe = pd.concat([output_pe, subset_pe])
 
