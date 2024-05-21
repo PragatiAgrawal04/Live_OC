@@ -252,6 +252,10 @@ def frag_table(table_number):
 
     with col1:
         #output_ce = output_ce.style.set_table_styles([{'backgroundColor': 'palegreen'}])
+        def coloring(val):
+            color = "palegreen" if val else "white"
+            return f"background-color: {color}"
+        output_ce = output_ce.style.applymap(coloring)
         st.dataframe(output_ce, column_config = {'strikePrice':'Strike Price',
                                                 'expiryDate':'Expiry Date',
                                                 'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
