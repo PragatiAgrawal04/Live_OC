@@ -51,7 +51,7 @@ def current_market_price(ticker, exchange):
         time.sleep(5)
 
 
-def get_dataframe(ticker):
+def get_dataframe(ticker, exp_date_selected):
     while True:
         try:
 
