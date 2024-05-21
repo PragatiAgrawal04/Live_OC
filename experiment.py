@@ -256,7 +256,17 @@ def get_dataframe(ticker):
 # output_ce, output_pe = get_dataframe()
 # print(output_ce)
 # print(output_pe)
-
+def highlight_ratio(s):
+    if s["Premium %"] > 1:
+        if s["Put Ratio"] > 1:
+            return ['background-color: paleturquoise'] * len(s)
+        else:
+            return ['background-color: paleturquoise'] * 2 +['background-color: white'] * 2
+    else:
+        if s["Put Ratio"] > 1:
+            return ['background-color: white'] * 2 +['background-color: paleturquoise'] * 2
+        else:
+            return ['background-color: white'] * len(s)
 @st.experimental_fragment
 def frag_table(table_number):
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
@@ -304,7 +314,8 @@ def frag_table(table_number):
                                                     'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
                                                     'instrumentType':'Instrument'})
         with col3:
-            df = df.style.format(formatter="{:.2f}".format)
+            df = df.style.apply(highlight_ratio, axis=1)
+            #df = df.style.format(formatter="{:.2f}".format)
             st.table(df)
         st.write(f'{ticker} LTP:', stock_ltp)
 
