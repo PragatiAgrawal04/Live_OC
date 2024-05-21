@@ -294,9 +294,10 @@ def frag_table(table_number):
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            ce_form = output_ce.style.format("{:.2%}")
-            output_ce_disp = ce_form.style.set_properties(**{'background-color':'palegreen'})
-            st.dataframe(output_ce_disp)
+            output_ce.style \
+              .format(precision=2, decimal=".") \
+              .set_properties(**{'background-color':'palegreen'})
+            st.dataframe(output_ce)
         with col2:
             output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
             st.dataframe(output_pe)
