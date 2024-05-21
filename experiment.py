@@ -305,7 +305,7 @@ def frag_table(table_number):
                                                     'instrumentType':'Instrument'})
         with col3:
             #df = df.style.set_properties(**{'background-color': 'paleturquoise'})
-            st.table(df,column_config = {'Premium %':st.column_config.NumberColumn('Premium %',format="%.2f"),
+            st.dataframe(df,column_config = {'Premium %':st.column_config.NumberColumn('Premium %',format="%.2f"),
                                          '(Premium + SP)%':st.column_config.NumberColumn('(Premium + SP)%',format="%.2f"),
                                          'Put Ratio':st.column_config.NumberColumn('Put Ratio',format="%.2f"),
                                          'Put Effective Ratio':st.column_config.NumberColumn('Put Effective Ratio',format="%.2f")})
