@@ -296,12 +296,12 @@ def frag_table(table_number):
               .format(precision=2, decimal=".") 
             st.dataframe(output_ce)
         with col2:
-             output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
-             output_pe.style.format(precision=2, decimal=".")
+            output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
+            output_pe.style.format(precision=2, decimal=".")
             st.dataframe(output_pe)
         with col3:
             df = df.style.set_properties(**{'background-color': 'paleturquoise'})
-            st.dataframe(df)
+            st.table(df)
 
         st.write(f'{ticker} LTP:', stock_ltp)
 
