@@ -305,7 +305,9 @@ def frag_table(table_number):
                                                     'instrumentType':'Instrument'})
         with col3:
             #df = df.style.set_properties(**{'background-color': 'paleturquoise'})
-            st.table(df.style.format(precision = 2))
+            for i in df.columns:
+                df.i = st.column_config.NumberColumn(format="%.2f")
+            st.table(df)
 
         st.write(f'{ticker} LTP:', stock_ltp)
 
