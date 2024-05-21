@@ -248,25 +248,25 @@ def frag_table(table_number):
             df.at[i, "Put Effective Ratio"] = round((((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,2)
 
         # ************************************************************************************
-        col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-        with col1:
-            #output_ce = output_ce.style.set_table_styles([{'backgroundColor': 'palegreen'}])
-            st.dataframe(output_ce, column_config = {'strikePrice':'Strike Price',
-                                                    'expiryDate':'Expiry Date',
-                                                    'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
-                                                    'instrumentType':'Instrument'})
-        with col2:
-            #output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
-            st.dataframe(output_pe, column_config = {'strikePrice':'Strike Price',
-                                                    'expiryDate':'Expiry Date',
-                                                    'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
-                                                    'instrumentType':'Instrument'})
-        with col3:
-            df = df.style.apply(highlight_ratio, axis=1)
-            #df = df.style.format(formatter="{:.2f}".format)
-            st.table(df)
-        st.write(f'{ticker} LTP:', stock_ltp)
+    with col1:
+        #output_ce = output_ce.style.set_table_styles([{'backgroundColor': 'palegreen'}])
+        st.dataframe(output_ce, column_config = {'strikePrice':'Strike Price',
+                                                'expiryDate':'Expiry Date',
+                                                'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
+                                                'instrumentType':'Instrument'})
+    with col2:
+        #output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
+        st.dataframe(output_pe, column_config = {'strikePrice':'Strike Price',
+                                                'expiryDate':'Expiry Date',
+                                                'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
+                                                'instrumentType':'Instrument'})
+    with col3:
+        df = df.style.apply(highlight_ratio, axis=1)
+        #df = df.style.format(formatter="{:.2f}".format)
+        st.table(df)
+    st.write(f'{ticker} LTP:', stock_ltp)
 
 
 frag_table(1)
