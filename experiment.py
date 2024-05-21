@@ -297,7 +297,7 @@ def frag_table(table_number):
                                                     'lastPrice':st.column_config.NumberColumn("Last Price",format="%.2f"),
                                                     'instrumentType':'Instrument'})
         with col2:
-            #output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
+            output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
             #output_pe.style.format(precision=2, decimal=".")
             st.dataframe(output_pe, column_config = {'strikePrice':'Strike Price',
                                                     'expiryDate':'Expiry Date',
@@ -306,10 +306,6 @@ def frag_table(table_number):
         with col3:
             #df = df.style.set_properties(**{'background-color': 'paleturquoise'})
             df = df.style.format(formatter="{:.2f}".format)
-            #st.dataframe(df,column_config = {'Premium %':st.column_config.NumberColumn('Premium %',format="%.2f"),
-             #                            '(Premium + SP)%':st.column_config.NumberColumn('(Premium + SP)%',format="%.2f"),
-              #                           'Put Ratio':st.column_config.NumberColumn('Put Ratio',format="%.2f"),
-               #                          'Put Effective Ratio':st.column_config.NumberColumn('Put Effective Ratio',format="%.2f")})
             st.table(df)
         st.write(f'{ticker} LTP:', stock_ltp)
 
