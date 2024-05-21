@@ -301,7 +301,7 @@ def frag_table(table_number):
             st.dataframe(output_pe)
         with col3:
             df = df.style.set_properties(**{'background-color': 'paleturquoise'})
-            st.table(df.style.format({:".2%"}))
+            st.table(df.style.format(({: "{:.2f}"}))
 
         st.write(f'{ticker} LTP:', stock_ltp)
 
