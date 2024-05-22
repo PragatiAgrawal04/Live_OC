@@ -253,7 +253,7 @@ def frag_table(table_number):
 
     with col1:
         output_ce = output_ce.style.set_properties(**{'background-color': 'palegreen'})
-        output_ce = output_ce.format({'lastPrice': "{:.2f}".format})
+        output_ce = output_ce.format({'lastPrice': "{:.2f}".format, 'strikePrice':"{:.1f}".format})
         st.dataframe(output_ce)
     with col2:
         output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
