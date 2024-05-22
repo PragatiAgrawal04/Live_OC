@@ -257,7 +257,7 @@ def frag_table(table_number):
         st.dataframe(output_ce)
     with col2:
         output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
-        output_pe = output_pe.format({'lastPrice': "{:.2f}".format})
+        output_pe = output_pe.format({'lastPrice': "{:.2f}".format, 'strikePrice':"{:.1f}".format})
         st.dataframe(output_pe)
     with col3:
         df = df.style.apply(highlight_ratio, axis=1)
