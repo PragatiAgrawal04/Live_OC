@@ -8,6 +8,7 @@ import datetime
 import streamlit as st
 import csv
 import mysql
+import toml
 
 
 st.set_page_config(page_title="Dashboard", layout="wide")
