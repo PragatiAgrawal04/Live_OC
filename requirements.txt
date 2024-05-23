@@ -41,8 +41,8 @@ lxml==4.9.3
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib==3.8.0
-mysqlclient==x.x.x
-SQLAlchemy==x.x.x
+mysqlclient
+SQLAlchemy
 nest-asyncio==1.6.0
 nsepy==0.8
 numpy==1.26.0
