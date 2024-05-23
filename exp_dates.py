@@ -306,13 +306,10 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
 #             curr.to_csv('history.csv', mode='a', index=False, header=False)
 
 # Reading data
-toml_data = toml.load("secrets.toml")
-# saving each credential into a variable
-HOST_NAME = toml_data['mysql']['host']
-DATABASE = toml_data['mysql']['database']
-PASSWORD = toml_data['mysql']['password']
-USER = toml_data['mysql']['user']
-PORT = toml_data['mysql']['port']
+HOST_NAME = 'localhost'
+DATABASE = 'live-oc'
+USER = 'root'
+PASSWORD = ''
 
 mydb = connection.connect(host=HOST_NAME, database=DATABASE, user=USER, passwd=PASSWORD, use_pure=True)
 #conn = st.connection('mysql', type='sql')
