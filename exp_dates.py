@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
 import csv
-import mysql
+import mysql.connector
 import toml
 
 
@@ -305,16 +305,32 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
 #         else:
 #             curr.to_csv('history.csv', mode='a', index=False, header=False)
 
-# Reading data
-HOST_NAME = 'localhost'
-DATABASE = 'live-oc'
-USER = 'root'
-PASSWORD = ''
+# # Reading data
+# HOST_NAME = 'localhost'
+# DATABASE = 'live-oc'
+# USER = 'root'
+# PASSWORD = ''
 
-mydb = connection.connect(host=HOST_NAME, database=DATABASE, user=USER, passwd=PASSWORD, use_pure=True)
-#conn = st.connection('mysql', type='sql')
-# Perform query.
-hist_df = pd.read_sql('SELECT * FROM history;' , mydb)
+# mydb = connection.connect(host=HOST_NAME, database=DATABASE, user=USER, passwd=PASSWORD, use_pure=True)
+# #conn = st.connection('mysql', type='sql')
+# # Perform query.
+# hist_df = pd.read_sql('SELECT * FROM history;' , mydb)
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password=""
+)
+
+mycursor = mydb.cursor()
+
+mycursor.execute("SELECT name, address FROM customers")
+
+myresult = mycursor.fetchall()
+hist_df = pd.DataFrame(myresult)
+#for x in myresult:
+  #print(x)
+
 if len(hist_df) > 0:
     st.dataframe(hist_df)
     #last_rec = hist_df.tail(1)
