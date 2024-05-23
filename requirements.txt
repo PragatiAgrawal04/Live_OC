@@ -1,4 +1,4 @@
-﻿altair==5.3.0
+altair==5.3.0
 asttokens==2.4.1
 attrs==23.2.0
 beautifulsoup4==4.12.2
@@ -41,12 +41,14 @@ lxml==4.9.3
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib==3.8.0
-mysqlclient
-SQLAlchemy
+matplotlib-inline==0.1.6
+mdurl==0.1.2
 nest-asyncio==1.6.0
 nsepy==0.8
 numpy==1.26.0
 oauthlib==3.2.2
+openpyxl==3.1.2
+packaging==23.2
 pandas==2.1.1
 parso==0.8.3
 Pillow==10.0.1
@@ -79,4 +81,5 @@ urllib3==2.0.5
 watchdog==4.0.0
 wcwidth==0.2.13
 xlwings==0.31.0
-
+mysqlclient
+SQLAlchemy
