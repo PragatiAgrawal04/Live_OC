@@ -41,15 +41,12 @@ lxml==4.9.3
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 matplotlib==3.8.0
-matplotlib-inline==0.1.6
 mysqlclient==x.x.x
 SQLAlchemy==x.x.x
 nest-asyncio==1.6.0
 nsepy==0.8
 numpy==1.26.0
 oauthlib==3.2.2
-openpyxl==3.1.2
-packaging==23.2
 pandas==2.1.1
 parso==0.8.3
 Pillow==10.0.1
