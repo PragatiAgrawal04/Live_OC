@@ -83,3 +83,4 @@ wcwidth==0.2.13
 xlwings==0.31.0
 mysql-connector-python
 SQLAlchemy
+mysqlclient
