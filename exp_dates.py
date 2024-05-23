@@ -227,8 +227,8 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
 
     exp_date_list_sel = DATE_LIST.copy()
     print("LIST: ", exp_date_list_sel)
-    print("EXP_OPTION:", exp_option)
     exp_option = datetime.datetime.strptime(exp_option, "%d-%m-%Y").date().strftime('%d-%m-%Y')
+    print("EXP_OPTION:", exp_option)
     exp_date_list_sel.remove(exp_option)
     exp_date_list_sel = [exp_option] + exp_date_list_sel
     #
@@ -298,13 +298,9 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                              'timestamp': [datetime.datetime.now()]
                              })
         if len(hist_df) > 30:
-            #curr.to_csv('history.csv', mode='w', index=False, header=True)
-            with open('history.csv', 'w') as f:
-                f.write(f"{curr}\n")
+            curr.to_csv('history.csv', mode='w', index=False, header=True)
         else:
-            #curr.to_csv('history.csv', mode='a', index=False, header=False)
-            with open('history.csv', 'a') as f:
-                f.write(f"{st.session_state['share_list1']}\n")
+            curr.to_csv('history.csv', mode='a', index=False, header=False)
 
 hist = pd.read_csv("history.csv")
 hist_df = pd.DataFrame(hist)
@@ -321,4 +317,3 @@ else:
     frag_table(1)
     frag_table(2)
     frag_table(3)
-
