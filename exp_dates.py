@@ -304,7 +304,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         else:
             #curr.to_csv('history.csv', mode='a', index=False, header=False)
             with open('history.csv', 'a') as f:
-                f.write(f"{curr}\n")
+                f.write(f"{st.session_state['share_list1']}\n")
 
 hist = pd.read_csv("history.csv")
 hist_df = pd.DataFrame(hist)
