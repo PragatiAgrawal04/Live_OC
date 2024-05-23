@@ -302,11 +302,6 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         else:
             curr.to_csv('history.csv', mode='a', index=False, header=False)
 
-hist = pd.read_csv("history.csv")
-hist_df = pd.DataFrame(hist)
-
-print(len(hist_df))
-
 if len(hist_df) > 0:
     last_rec = hist_df.tail(1)
     print(last_rec)
