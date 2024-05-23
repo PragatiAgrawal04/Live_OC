@@ -302,10 +302,15 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
 #         else:
 #             curr.to_csv('history.csv', mode='a', index=False, header=False)
 
+HOST_NAME = 'localhost'
+DATABASE = 'live-oc'
+user = 'root'
+PASSWORD = ''
 
-conn = st.connection('mysql', type='sql')
+mydb = connection.connect(host=HOST_NAME, database=DATABASE, user=USER, passwd=PASSWORD, use_pure=True)
+#conn = st.connection('mysql', type='sql')
 # Perform query.
-hist_df = conn.query('SELECT * from mytable;', ttl=600)
+hist_df = pd.read_sql('SELECT * FROM history;' , mydb)
 if len(hist_df) > 0:
     st.dataframe(hist_df)
     #last_rec = hist_df.tail(1)
