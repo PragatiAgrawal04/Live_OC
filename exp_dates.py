@@ -288,27 +288,32 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         st.table(df)
     st.write(f'{ticker} LTP:', stock_ltp)
 
-    if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
-        curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
-                             'exp1': [st.session_state["exp_list1"]],
-                             'table2': [st.session_state["share_list2"]],
-                             'exp2': [st.session_state["exp_list2"]],
-                             'table3': [st.session_state["share_list3"]],
-                             'exp3': [st.session_state["exp_list3"]],
-                             'timestamp': [datetime.datetime.now()]
-                             })
-        if len(hist_df) > 30:
-            curr.to_csv('history.csv', mode='w', index=False, header=True)
-        else:
-            curr.to_csv('history.csv', mode='a', index=False, header=False)
+#     if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
+#         curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
+#                              'exp1': [st.session_state["exp_list1"]],
+#                              'table2': [st.session_state["share_list2"]],
+#                              'exp2': [st.session_state["exp_list2"]],
+#                              'table3': [st.session_state["share_list3"]],
+#                              'exp3': [st.session_state["exp_list3"]],
+#                              'timestamp': [datetime.datetime.now()]
+#                              })
+#         if len(hist_df) > 30:
+#             curr.to_csv('history.csv', mode='w', index=False, header=True)
+#         else:
+#             curr.to_csv('history.csv', mode='a', index=False, header=False)
 
+
+conn = st.connection('mysql', type='sql')
+# Perform query.
+hist_df = conn.query('SELECT * from mytable;', ttl=600)
 if len(hist_df) > 0:
-    last_rec = hist_df.tail(1)
-    print(last_rec)
-    frag_table(1, last_rec['table1'].item(), last_rec['exp1'].item())
-    frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
-    frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
-else:
-    frag_table(1)
-    frag_table(2)
-    frag_table(3)
+    st.dataframe(hist_df)
+    #last_rec = hist_df.tail(1)
+    #print(last_rec)
+    #frag_table(1, last_rec['table1'].item(), last_rec['exp1'].item())
+    #frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
+    #frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
+# else:
+#     frag_table(1)
+#     frag_table(2)
+#     frag_table(3)
