@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
 import csv
+from mysql-connector-python import connection
+
 
 st.set_page_config(page_title="Dashboard", layout="wide")
 
