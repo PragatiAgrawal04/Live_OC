@@ -6,6 +6,7 @@ import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
 import streamlit as st
+import csv
 
 st.set_page_config(page_title="Dashboard", layout="wide")
 
@@ -34,9 +35,20 @@ def last_thursdays(year):
         # now to get the date of the last Thursday of the month, subtract it from
         # month end date:
         df_Expiry = df_mEnd - pd.to_timedelta(offset, unit='D')
-        exp.append(df_Expiry)
+        exp.append(df_Expiry.date())
 
     return exp
+
+
+today_year = datetime.datetime.now().year
+exp_date_list = last_thursdays(today_year)
+DATE_LIST = []
+TODAY = datetime.date.today()
+for i in range(len(exp_date_list)):
+    x = (exp_date_list[i] - TODAY).days
+    if x > 0:
+        DATE_LIST.append(exp_date_list[i].strftime('%d-%m-%Y'))
+EXP_OPTION = DATE_LIST[0]
 
 
 def current_market_price(ticker, exchange):
@@ -62,7 +74,7 @@ def get_dataframe(ticker, exp_date_selected):
                        "accept-language": "en-US,en;q=0.9",
                        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                        "cookie": 'nsit=8rr9OzixvrycpLZagryfR87e; nseappid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGkubnNlIiwiYXVkIjoiYXBpLm5zZSIsImlhdCI6MTcxNjQzNzcxMywiZXhwIjoxNzE2NDQ0OTEzfQ.USGXl3G_5kiehlM3RrfUz62JjIgI4lSb8jymFHPre-U; AKA_A2=A; bm_sz=E7C7E53F03A99BA1D6DE88ED670E5233~YAAQBqfLF3KRQlCPAQAA3QOpoxfRLxOXbcM7KMGVDD2eCPAKSqUWzPc7BvXlD6GcL4NFbVEoNPux6iFGTw4xB8KfwKw6W2hRp/5muKr1tM7dV20Iu+APEfgVGNScyc99Km6E+4OWmiDwAD4ALebWnei0UjPbDi1n3H+sTXF1fKZMCsyhNY6+R/t8rbldkbfu/oDfw1PgMkDNo/8YP6Vd7wrutDUwr4eAY1rQkcHoo55Y/06v93steaVaLj+Bglk0UJbBvd0v4wgosy2aFav+VhyWspp8yHagP+fmNSr4IZpLh95izFOqLnyZS89GGjJT8fMdG59e3BmbuLETWhAt9kYzS9aPyavaeF8fuVgmWFb/5YAzAXEPVSH5aJmrRDX5EXZMtGVR3OBFj3ubtg==~3682870~3356470; _ga=GA1.1.313319009.1716437715; defaultLang=en; ak_bmsc=78D80E7895B4310DC34187CD40438A06~000000000000000000000000000000~YAAQBqfLF/+RQlCPAQAAchmpoxfoQoglRUFyXmakjp1KfOAfdpHsrxUxRntNoxbqzjs/8iuWaSv1+PttQbeP6tN6fekvxbwhLnvRzACKrp3+VVLu8RJkbKoz6O9+FhJ80Jmf5iUryvcMtP8QpqOXtXizWcU5ZjhvruSGv5QdFchT08HVADfDJcWomDq/NsoLnTRE4lm6Ee4i3zqqr2sU5oyut9EU9Csz0GU4iA1uGMcfH6Bnv7SyqQaIkOmWN2JYuAfg0q0PrsxKrPxpQkw1ZhLr1BsUKu4gYnz6iQJ39USLvqoEAIuPNHMnk2Xkvsmk75X0j2KHPRxIaACWOtYAKXBPT0hctRuYk6u35bWK2y/VMCNAlE1/vS0mlqXiiWEpqiYV59Elqsrn61ZOXhFjTbMPqkf5tUtHkVzypIiK5d2qVAieddrwuRj2/JLrmkmJ7NGTyIP8FbO+43NjHOQ=; _abck=1A23B1D24482B0B0DBACF4CF84C7525F~0~YAAQBqfLF2qSQlCPAQAAWCSpowveRGcqkGrtReuURHrV/VrccgvSj70NYUvE5K/VSlrsNkEpugRTu3Lagc97Sau3VUUHdHygvErefLSfS5kjc6F0xtjVSEApAUxIRxmdU56uQ/rQ0SMZM/KpA6fk+3mmdiC90KyCYaqo3DPF1W9TejjawSuq0Pm8Bk1bHPY02ce1fyJPLCiBr7XfLSraL6IFcxtq0lYat8g5GnoopYBTcMOQWKgvLEh3sazhg7br/iYWyUib7K+FrgLBNNBr60od8NRrLBRN/rqr30q2+m2ECOLDYMgjLNVKwKaNbdiMLSfFVA0mH50kAggfdI3iKLtZdftScOc0LnnN0eUIGbBEpEWVdBvnl3gw7FtqCmV8M9zKmbusJXqKl0GBioWzQyWCrubxunOmagY=~-1~||-1||~-1; RT="z=1&dm=nseindia.com&si=46ab8fb0-60c3-444a-9d3b-73b95d5d7f1f&ss=lwiqp10s&sl=1&se=8c&tt=6s0&bcn=%2F%2F17de4c1b.akstat.io%2F&ld=7kg&nu=kpaxjfo&cl=bu4"; _ga_QJZ4447QD3=GS1.1.1716437714.1.0.1716437725.0.0.0; _ga_87M7PJ3R97=GS1.1.1716437716.1.1.1716437725.0.0.0; bm_sv=C168F321E52168FDFDE90AD14355303C~YAAQBqfLF/SSQlCPAQAAczapoxcVaBaLFQ/nSr8L1WhebX8d0TFEYaYN8wniCA+4EyNUjMwK11InV89Y00vef6L6+UkTf7uuZOkhH+x4EgYHN3LhAucLODkaypkl3ARMNrvHXTWxYLw5znjTMW4fFZmw6Cfj3znzYDAmWZl3KRD/32wmVgPRl2sSUUoN2Ua6yu0ckn2psbUdjMF+unSAQizBJn384f5SmhNd3quXCF4gYoH8KMU4jlqkdtNmLEuoEfg=~1'
-                      }
+                       }
             session = requests.Session()
             data = session.get(url, headers=headers).json()["records"]["data"]
             ocdata = []
@@ -79,11 +91,11 @@ def get_dataframe(ticker, exp_date_selected):
             # st.range("A1").value = df
             # print(df)
 
-            expiry_dates = df['expiryDate'].unique().tolist()
-            fin_exp_dates = []
-            for i in expiry_dates:
-                temp_expiry = datetime.datetime.strptime(i, '%d-%b-%Y')
-                fin_exp_dates.append(temp_expiry.strftime('%d-%m-%Y'))
+            # expiry_dates = df['expiryDate'].unique().tolist()
+            # fin_exp_dates = []
+            # for i in expiry_dates:
+            #     temp_expiry = datetime.datetime.strptime(i, '%d-%b-%Y')
+            #     fin_exp_dates.append(temp_expiry.strftime('%d-%m-%Y'))
 
             strikes = df.strikePrice.unique().tolist()
             strike_size = int(strikes[int(len(strikes) / 2) + 1]) - int(strikes[int(len(strikes) / 2)])
@@ -201,25 +213,36 @@ def highlight_ratio(s):
             return ['background-color: white'] * len(s)
 
 
+
+
+
 @st.experimental_fragment
-def frag_table(table_number):
+def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
+
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
     share_list = list(shares["Symbol"])
+    selected_option = selected_option.strip()
+    share_list.remove(selected_option)
+    share_list = [selected_option] + share_list
 
-    today_year = datetime.datetime.now().year
-    exp_date_list = last_thursdays(today_year)
-    date_list = []
-    today_date = datetime.date.today()
-    for i in range(len(exp_date_list)):
-        x = (exp_date_list[i].date() - today_date).days
-        if x > 0:
-            date_list.append(exp_date_list[i].date().strftime('%d-%m-%Y'))
-    print(date_list)
+    exp_date_list_sel = DATE_LIST.copy()
+    print("LIST: ", exp_date_list_sel)
+    exp_option = datetime.datetime.strptime(exp_option, "%d-%m-%Y").date().strftime('%d-%m-%Y')
+    print("EXP_OPTION:", exp_option)
+    exp_date_list_sel.remove(exp_option)
+    exp_date_list_sel = [exp_option] + exp_date_list_sel
+    #
+    # date_list = []
+    # today_date = datetime.date.today()
+    # for i in range(len(exp_date_list)):
+    #     x = (exp_date_list[i] - today_date).days
+    #     if x > 0:
+    #         date_list.append(exp_date_list[i].strftime('%d-%m-%Y'))
     c1, c2 = st.columns(2)
     with c1:
         selected_option = st.selectbox("Share List", share_list, key="share_list" + str(table_number))
     with c2:
-        exp_option = st.selectbox("Expiry Date", date_list, key="exp_list" + str(table_number))
+        exp_option = st.selectbox("Expiry Date", exp_date_list_sel, key="exp_list" + str(table_number))
         if selected_option in share_list:
             ticker = selected_option
             output_ce, output_pe = get_dataframe(ticker, exp_option)
@@ -265,7 +288,33 @@ def frag_table(table_number):
         st.table(df)
     st.write(f'{ticker} LTP:', stock_ltp)
 
+    if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
+        curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
+                             'exp1': [st.session_state["exp_list1"]],
+                             'table2': [st.session_state["share_list2"]],
+                             'exp2': [st.session_state["exp_list2"]],
+                             'table3': [st.session_state["share_list3"]],
+                             'exp3': [st.session_state["exp_list3"]],
+                             'timestamp': [datetime.datetime.now()]
+                             })
+        if len(hist_df) > 30:
+            curr.to_csv('history.csv', mode='w', index=False, header=True)
+        else:
+            curr.to_csv('history.csv', mode='a', index=False, header=False)
 
-frag_table(1)
-frag_table(2)
-frag_table(3)
+hist = pd.read_csv("history.csv")
+hist_df = pd.DataFrame(hist)
+
+print(len(hist_df))
+
+if len(hist_df) > 0:
+    last_rec = hist_df.tail(1)
+    print(last_rec)
+    frag_table(1, last_rec['table1'].item(), last_rec['exp1'].item())
+    frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
+    frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
+else:
+    frag_table(1)
+    frag_table(2)
+    frag_table(3)
+
