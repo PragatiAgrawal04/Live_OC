@@ -227,8 +227,8 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
 
     exp_date_list_sel = DATE_LIST.copy()
     print("LIST: ", exp_date_list_sel)
-    exp_option = datetime.datetime.strptime(exp_option, "%d-%m-%Y").date().strftime('%d-%m-%Y')
     print("EXP_OPTION:", exp_option)
+    exp_option = datetime.datetime.strptime(exp_option, "%d-%m-%Y").date().strftime('%d-%m-%Y')
     exp_date_list_sel.remove(exp_option)
     exp_date_list_sel = [exp_option] + exp_date_list_sel
     #
