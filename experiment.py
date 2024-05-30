@@ -46,7 +46,7 @@ DATE_LIST = []
 TODAY = datetime.date.today()
 for i in range(len(exp_date_list)):
     x = (exp_date_list[i] - TODAY).days
-    if x > 0:
+    if x >= 0:
         DATE_LIST.append(exp_date_list[i].strftime('%d-%m-%Y'))
 EXP_OPTION = DATE_LIST[0]
 
