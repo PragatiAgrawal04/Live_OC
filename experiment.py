@@ -49,7 +49,7 @@ for i in range(len(exp_date_list)):
     if x > 0:
         DATE_LIST.append(exp_date_list[i].strftime('%d-%m-%Y'))
 EXP_OPTION = DATE_LIST[0]
-st.write(DATE_LIST)
+
 
 def current_market_price(ticker, exchange):
     url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
