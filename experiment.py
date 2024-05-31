@@ -200,17 +200,30 @@ def get_dataframe(ticker, exp_date_selected):
 # output_ce, output_pe = get_dataframe()
 # print(output_ce)
 # print(output_pe)
-def highlight_ratio(s):
-    if s["CE Premium %"] > 1:
-        if s["PE Premium %"] > 1:
-            return ['background-color: paleturquoise'] * len(s)
-        else:
-            return ['background-color: paleturquoise'] * 2 + ['background-color: white'] * 2
-    else:
-        if s["PE Premium %"] > 1:
-            return ['background-color: white'] * 2 + ['background-color: paleturquoise'] * 2
-        else:
-            return ['background-color: white'] * len(s)
+def highlight_ratio(val, column_name):
+    if column_name == "CE Premium %":
+        color = 'background-color: paleturquoise' if val > 1 else ""
+        return color
+    if column_name == "CE (Premium + SP)%":
+        color = 'background-color: wheat' if val > 5 else ""
+        return color
+    if column_name == "PE Premium %":
+        color = 'background-color: paleturquoise' if val > 1 else ""
+        return color
+    if column_name == "PE (Premium + SP)%":
+        color = 'background-color: wheat' if val > 5 else ""
+        return color
+
+    # if s["CE Premium %"] > 1:
+    #     if s["PE Premium %"] > 1:
+    #         return ['background-color: paleturquoise'] * len(s)
+    #     else:
+    #         return ['background-color: paleturquoise'] * 2 + ['background-color: white'] * 2
+    # else:
+    #     if s["PE Premium %"] > 1:
+    #         return ['background-color: white'] * 2 + ['background-color: paleturquoise'] * 2
+    #     else:
+    #         return ['background-color: white'] * len(s)
 
 
 
@@ -283,7 +296,10 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         output_pe = output_pe.format({'lastPrice': "{:.2f}".format, 'strikePrice':"{:.1f}".format})
         st.dataframe(output_pe)
     with col3:
-        df = df.style.apply(highlight_ratio, axis=1)
+        df = df.style.applymap(lambda val: highlight_ratio(val, 'CE Premium %'), subset=['CE Premium %'])
+        df = df.applymap(lambda val: highlight_ratio(val, 'CE (Premium + SP)%'), subset=['CE (Premium + SP)%'])
+        df = df.applymap(lambda val: highlight_ratio(val, 'PE Premium %'), subset=['PE Premium %'])
+        df = df.applymap(lambda val: highlight_ratio(val, 'PE (Premium + SP)%'), subset=['PE (Premium + SP)%'])
         df = df.format(formatter="{:.2f}".format)
         st.table(df)
     st.write(f'{ticker} CMP:', stock_ltp)
@@ -314,7 +330,7 @@ if len(hist_df) > 0:
     frag_table(2, last_rec['table2'].item(), last_rec['exp2'].item())
     frag_table(3, last_rec['table3'].item(), last_rec['exp3'].item())
 else:
-    frag_table(1)
-    frag_table(2)
-    frag_table(3)
+    frag_table(1, 'RELIANCE')
+    frag_table(2, 'VEDL')
+    frag_table(3, 'INFY')
 
