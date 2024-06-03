@@ -10,7 +10,8 @@ import csv
 
 st.set_page_config(page_title="Dashboard", layout="wide")
 
-TWO_PERCENT_MARKET_PRICE = 0.0
+TWO_PERCENT_MARKET_PRICE_CE = 0.0
+TWO_PERCENT_MARKET_PRICE_PE = 0.0
 
 exchange = "NSE"
 
@@ -121,19 +122,21 @@ def get_dataframe(ticker, exp_date_selected):
             strike_size = int(strikes[int(len(strikes) / 2) + 1]) - int(strikes[int(len(strikes) / 2)])
 
             for price in current_market_price(ticker, exchange):
-                two_percent_cmp = price + 0.02 * price
-                TWO_PERCENT_MARKET_PRICE = two_percent_cmp
+                two_percent_cmp_ce = price + 0.02 * price
+                two_percent_cmp_pe = price - 0.02 * price
+                TWO_PERCENT_MARKET_PRICE_CE = two_percent_cmp_ce
+                TWO_PERCENT_MARKET_PRICE_PE = two_percent_cmp_pe
                 break
 
-            print(TWO_PERCENT_MARKET_PRICE)
+            print(TWO_PERCENT_MARKET_PRICE_CE, TWO_PERCENT_MARKET_PRICE_PE)
 
             # access dataframe for atm price
-            atm = int(round(TWO_PERCENT_MARKET_PRICE / strike_size, 0) * strike_size)
-            print(atm)
+            atm_ce = int(round(TWO_PERCENT_MARKET_PRICE_CE / strike_size, 0) * strike_size)
+            print(atm_ce)
 
             output_ce = pd.DataFrame()
 
-            atm_pe = atm
+            atm_pe = int(round(TWO_PERCENT_MARKET_PRICE_PE / strike_size, 0) * strike_size)
             output_pe = pd.DataFrame()
 
             for _ in range(5):
@@ -142,12 +145,12 @@ def get_dataframe(ticker, exp_date_selected):
                 ab = True
                 while ab:
 
-                    fd = df[df['strikePrice'] == atm]
+                    fd = df[df['strikePrice'] == atm_ce]
 
                     if fd.empty:
-                        print("empty df ce", atm)
-                        atm = atm + 0.5
-                        if atm > strikes[-1]:
+                        print("empty df ce", atm_ce)
+                        atm_ce = atm_ce + 0.5
+                        if atm_ce > strikes[-1]:
                             break
                     else:
                         ab = False
@@ -200,7 +203,7 @@ def get_dataframe(ticker, exp_date_selected):
                 output_pe = pd.concat([output_pe, subset_pe])
 
                 # (for CE)
-                atm += strike_size
+                atm_ce += strike_size
 
                 # (for PE)
                 atm_pe -= strike_size
