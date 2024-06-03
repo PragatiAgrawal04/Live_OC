@@ -305,7 +305,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 2)
 
         # ************************************************************************************
-    st.write(f'{ticker} CMP:', stock_ltp)
+    st.write(f'CMP:', stock_ltp)
     col1, col2, col3 = st.columns(3)
 
     with col1:
