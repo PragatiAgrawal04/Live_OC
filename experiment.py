@@ -16,25 +16,6 @@ TWO_PERCENT_MARKET_PRICE_PE = 0.0
 exchange = "NSE"
 
 
-def center_align_dataframe():
-    st.markdown(
-        """
-        <style>
-        .dataframe table {
-            margin: auto;
-        }
-        .dataframe td, .dataframe th {
-            text-align: center;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-center_align_dataframe()
-
-
 def last_thursdays(year):
     exp = []
     for month in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
