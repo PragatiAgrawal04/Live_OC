@@ -16,6 +16,25 @@ TWO_PERCENT_MARKET_PRICE_PE = 0.0
 exchange = "NSE"
 
 
+def center_align_dataframe():
+    st.markdown(
+        """
+        <style>
+        .dataframe table {
+            margin: auto;
+        }
+        .dataframe td, .dataframe th {
+            text-align: center;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+center_align_dataframe()
+
+
 def last_thursdays(year):
     exp = []
     for month in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
@@ -69,44 +88,44 @@ def current_market_price(ticker, exchange):
 def get_dataframe(ticker, exp_date_selected):
     while True:
         try:
-            headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'}
+            headers = {
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'}
 
             main_url = "https://www.nseindia.com/"
             response = requests.get(main_url, headers=headers)
             cookies = response.cookies
-            
+
             url = f"https://www.nseindia.com/api/option-chain-equities?symbol={ticker}"
             option_chain_data = requests.get(url, headers=headers, cookies=cookies)
-        
+
             data = option_chain_data.json()["records"]["data"]
             ocdata = []
-            
+
             for i in data:
                 for j, k in i.items():
                     if j == "CE" or j == "PE":
                         info = k
                         info["instrumentType"] = j
                         ocdata.append(info)
-            
+
             df = pd.DataFrame(ocdata)
 
-            
-            #headers = {"accept-encoding": "gzip, deflate, br, zstd",
+            # headers = {"accept-encoding": "gzip, deflate, br, zstd",
             #          "accept-language": "en-US,en;q=0.9",
             #          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             #          "cookie": '_ga=GA1.1.313319009.1716437715; nsit=dnlejS3SxYgCuQzctAqIsl3s; nseappid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcGkubnNlIiwiYXVkIjoiYXBpLm5zZSIsImlhdCI6MTcxNzM5MDcwOCwiZXhwIjoxNzE3Mzk3OTA4fQ.6K1gU12F6hH4OEntqITpi8zuF5CnkZXOJDBAh5BbtMs; AKA_A2=A; _abck=1A23B1D24482B0B0DBACF4CF84C7525F~0~YAAQlTwSAu//8qSPAQAA9I123Atg3R45zHaJpfNIfrFp13+z4l2DwEDltnmPRairREbTCwhDAdcmUZiwtOjwOY+Jmf5gAumxiARW+uUegrrtf71Tz2gLYgogJLxt0Ft+6avTDjvomSp7JSoCFlm55dJ3uEXgq78wDshdrPtu3jDsBkf47MYeDJ7uKwY8NThBKLBs0b2vRjD5P9cnqrRQ/TKl3zdxyvm63vmBewr0ggwhOOkIsLQrD5bu/Te5X3XZwSaMcahXPzjRBtPVbO4mY+WNDxVhSMdMRNzcgiaM1D49/jWc4giIHMV55a15Ik/ZTeIa4G1BNlUxwwauqafF3TzklEugkQYqu0kcR9KY49v5otClH5GZkjRS2jOyX+BHLhklKS97XzgrvxSW++rIR5QKMAPrOQBxI+Y=~-1~-1~-1; bm_sz=65B0133D1988CB4407E878C21CF59A3B~YAAQlTwSAvL/8qSPAQAA9I123BewPCeIpXmp7QAjUtE1jvwg76DCocENDjKB8VeygWAUba9Y4fPOW4fiohRqw4MXWhnsxVUefk9vbE5PG9zbGIbka12zvpmXGQYesy1ddw64hiq6bxQ5cvJu88vHm9HsIPYrHHQLzJHOMBkTao86R2RfSP3vzPu8ec0z6he7ov/BXkCmjFNE2bcba0nJTQ84ynu9MkpxE+gnTW6DQAjYML8z0zqqoBWKAR0V9MkRl5Iu+OnDd/r1lE6wgmQfkKQQJQv1OAIrvyaIi6aWQNRoWvSk2KgQw8vM/1q3P+Wq9/QcFSvln5Nvls34pCGmRV5usNIIiK3gPfkY66rQYqFCX9L4c/Zftoq433U3n1oFCBKfnjzB5F7WHDjufNU=~3290163~3490374; defaultLang=en; ak_bmsc=BD4F48BB75E94AA6F23BAA3A665DE721~000000000000000000000000000000~YAAQlTwSAgoA86SPAQAAb5V23BceME5Zxa+g9s04chgQBI1c102bHy5WG0WYDl0Yw8EOnecA5E95Y4dboSwlZ/H/n6ym4VpOhqajlAElvRUS44Tj9s8z6akGdF2g3TfR0I0Pcg9bcGhK0N/qoa6ybR7L2F+x3kv/LNPcGGoR2S8XC+9feFzPTSx4AbQNYfrpQZcPbGrTKRTthzJ1CvwtgO7UoVeqqOZ1SWmH4iRwEk+J1DqBkxStwKn32N300/ACO1jqQK1GlfSspc2Uk5ZSkC4npCJZndnwc97V66N7UTFbpQJKrhBhKMQ9IbHY/4IXvxuz1vgnIZzoM6s3ueSuSLDXFBVlmIbb2xQnhJ1+7aPnT6HsRjaOHo62kFGUmQnpLVsKb7I3bQzv/KpCFm9+cQzHyB0eXCmmIyeP+f2qzoqD94tRphqGv6/eqKrreC/4J6K6dSTuWdQ7; RT="z=1&dm=nseindia.com&si=46ab8fb0-60c3-444a-9d3b-73b95d5d7f1f&ss=lwyi32v2&sl=1&se=8c&tt=1u1&bcn=%2F%2F684dd32b.akstat.io%2F&ld=3ur&nu=kpaxjfo&cl=az7"; _ga_QJZ4447QD3=GS1.1.1717390721.9.0.1717390721.0.0.0; _ga_87M7PJ3R97=GS1.1.1717390709.10.1.1717390721.0.0.0; bm_sv=BBB3B8E3C3325DC2E28AF3AFC682ACC9~YAAQlTwSAjUA86SPAQAAKMJ23BfB7G/olXzuRiS5qOjiU3PljkzR99cWi6RStIIiZeuoR48rGBXbCOF6sBZnCU6tfdyUh57wkdIFYEDoXnxAAKFtmugVmzlG9xX42LqaratJqYw4RvDF6aFCioK7xLeUd2Z1bPo804WjQa3Z6rfarVtXNotlwxnfJY1U/cv/cA1Tr5fBbfLQKvOsmuqXlpZ5+MhTMfoo9/F7JdzyowRQ0Ee6qyrk/cXFnUyyEHGxLWM=~1'
             #         }
-            #session = requests.Session()
-            #data = session.get(url, headers=headers).json()["records"]["data"]
-            #ocdata = []
-            #for i in data:
+            # session = requests.Session()
+            # data = session.get(url, headers=headers).json()["records"]["data"]
+            # ocdata = []
+            # for i in data:
             #    for j, k in i.items():
             #        if j == "CE" or j == "PE":
             #            info = k
             #            info["instrumentType"] = j
             #            ocdata.append(info)
 
-            #df = pd.DataFrame(ocdata)
+            # df = pd.DataFrame(ocdata)
             # wb = xw.Book("optionchaintracker.xlsx")
             # st = wb.sheets("vedl")
             # st.range("A1").value = df
@@ -220,20 +239,17 @@ def get_dataframe(ticker, exp_date_selected):
             pass
 
 
-# output_ce, output_pe = get_dataframe()
-# print(output_ce)
-# print(output_pe)
 def highlight_ratio(val, column_name):
-    if column_name == "CE Premium %":
+    if column_name == "CE Premium%":
         color = 'background-color: paleturquoise' if val > 1 else ""
         return color
-    if column_name == "CE (Premium + SP)%":
+    if column_name == "CE (Premium+SP)%":
         color = 'background-color: wheat' if val > 5 else ""
         return color
-    if column_name == "PE Premium %":
+    if column_name == "PE Premium%":
         color = 'background-color: paleturquoise' if val > 1 else ""
         return color
-    if column_name == "PE (Premium + SP)%":
+    if column_name == "PE (Premium+SP)%":
         color = 'background-color: wheat' if val > 5 else ""
         return color
 
@@ -251,10 +267,8 @@ def highlight_ratio(val, column_name):
 
 
 
-
 @st.experimental_fragment
 def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
-
     shares = pd.read_csv("FNO Stocks - All FO Stocks List, Technical Analysis Scanner.csv")
     share_list = list(shares["Symbol"])
     selected_option = selected_option.strip()
@@ -295,15 +309,15 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         else:
             fin_len = l2
         matrix = np.zeros((fin_len, 4))
-        df = pd.DataFrame(matrix, columns=["CE Premium %", "CE (Premium + SP)%", "PE Premium %", "PE (Premium + SP)%"])
+        df = pd.DataFrame(matrix, columns=["CE Premium%", "CE (Premium+SP)%", "PE Premium%", "PE (Premium+SP)%"])
 
         for i in range(len(df)):
-            df.at[i, "CE Premium %"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100, 2)
-            df.at[i, "CE (Premium + SP)%"] = round(
+            df.at[i, "CE Premium%"] = round((output_ce["lastPrice"].iloc[i] / stock_ltp) * 100, 2)
+            df.at[i, "CE (Premium+SP)%"] = round(
                 (((output_ce["strikePrice"].iloc[i] - stock_ltp) + output_ce["lastPrice"].iloc[i]) / stock_ltp) * 100,
                 2)
-            df.at[i, "PE Premium %"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100, 2)
-            df.at[i, "PE (Premium + SP)%"] = round(
+            df.at[i, "PE Premium%"] = round((output_pe["lastPrice"].iloc[i] / stock_ltp) * 100, 2)
+            df.at[i, "PE (Premium+SP)%"] = round(
                 (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,
                 2)
 
@@ -312,21 +326,41 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        output_ce = output_ce.style.set_properties(**{'background-color': 'palegreen','font-size': '20pt'})
-        output_ce = output_ce.format({'lastPrice': "{:.2f}".format, 'strikePrice':"{:.1f}".format})
-        st.dataframe(output_ce)
+        output_ce = output_ce.rename(columns={'strikePrice': 'Strike Price',
+                                              'expiryDate': 'Expiry Date',
+                                              'lastPrice': 'Last Price',
+                                              'instrumentType': 'Type'})
+        output_ce = output_ce.style.set_properties(**{'text-align': 'center', 'background-color': 'palegreen'}).set_table_styles(
+            [{'selector': 'th', 'props': [('text-align', 'center')]}])
+        output_ce = output_ce.format({'Last Price': "{:.2f}".format, 'Strike Price': "{:.1f}".format})
+        st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
+        output_ce.columns = ['<div class="col_heading">'+col+'</div>' for col in output_ce.columns]
+        st.write(output_ce.to_html(escape=False), unsafe_allow_html=True)
+
     with col2:
-        output_pe = output_pe.style.set_properties(**{'background-color': 'antiquewhite'})
-        output_pe = output_pe.format({'lastPrice': "{:.2f}".format, 'strikePrice':"{:.1f}".format})
-        st.dataframe(output_pe)
+        output_pe = output_pe.rename(columns={'strikePrice': 'Strike Price',
+                                              'expiryDate': 'Expiry Date',
+                                              'lastPrice': 'Last Price',
+                                              'instrumentType': 'Type'})
+        output_pe = output_pe.style.set_properties(
+            **{'text-align': 'center', 'background-color': 'antiquewhite'}).set_table_styles(
+            [{'selector': 'th', 'props': [('text-align', 'center')]}])
+        output_pe = output_pe.format({'Last Price': "{:.2f}".format, 'Strike Price': "{:.1f}".format})
+        st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
+        output_pe.columns = ['<div class="col_heading">' + col + '</div>' for col in output_pe.columns]
+        st.write(output_pe.to_html(escape=False), unsafe_allow_html=True)
     with col3:
-        df = df.style.applymap(lambda val: highlight_ratio(val, 'CE Premium %'), subset=['CE Premium %'])
-        df = df.applymap(lambda val: highlight_ratio(val, 'CE (Premium + SP)%'), subset=['CE (Premium + SP)%'])
-        df = df.applymap(lambda val: highlight_ratio(val, 'PE Premium %'), subset=['PE Premium %'])
-        df = df.applymap(lambda val: highlight_ratio(val, 'PE (Premium + SP)%'), subset=['PE (Premium + SP)%'])
+        df = df.style.applymap(lambda val: highlight_ratio(val, 'CE Premium%'), subset=['CE Premium%'])
+        df = df.applymap(lambda val: highlight_ratio(val, 'CE (Premium+SP)%'), subset=['CE (Premium+SP)%'])
+        df = df.applymap(lambda val: highlight_ratio(val, 'PE Premium%'), subset=['PE Premium%'])
+        df = df.applymap(lambda val: highlight_ratio(val, 'PE (Premium+SP)%'), subset=['PE (Premium+SP)%'])
         df = df.format(formatter="{:.2f}".format)
-        st.table(df)
-    
+        df = df.set_properties(
+            **{'text-align': 'center'}).set_table_styles(
+            [{'selector': 'th', 'props': [('text-align', 'center')]}])
+        st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
+        df.columns = ['<div class="col_heading">' + col + '</div>' for col in df.columns]
+        st.write(df.to_html(escape=False), unsafe_allow_html=True)
 
     if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
         curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
@@ -341,6 +375,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             curr.to_csv('history.csv', mode='w', index=False, header=True)
         else:
             curr.to_csv('history.csv', mode='a', index=False, header=False)
+
 
 hist = pd.read_csv("history.csv")
 hist_df = pd.DataFrame(hist)
@@ -357,4 +392,3 @@ else:
     frag_table(1, 'RELIANCE')
     frag_table(2, 'VEDL')
     frag_table(3, 'INFY')
-
