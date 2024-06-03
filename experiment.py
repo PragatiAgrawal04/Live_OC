@@ -305,6 +305,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 2)
 
         # ************************************************************************************
+    st.write(f'{ticker} CMP:', stock_ltp)
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -322,7 +323,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         df = df.applymap(lambda val: highlight_ratio(val, 'PE (Premium + SP)%'), subset=['PE (Premium + SP)%'])
         df = df.format(formatter="{:.2f}".format)
         st.table(df)
-    st.write(f'{ticker} CMP:', stock_ltp)
+    
 
     if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
         curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
