@@ -66,6 +66,21 @@ def current_market_price(ticker, exchange):
         time.sleep(5)
 
 
+
+def fifty_two_week_high_low(ticker, exchange):
+    url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
+
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    class1 = "P6K39c"
+
+    price = soup.find_all(class_=class1)[2].text
+    low_52_week = float(price.split("-")[0].strip()[1:].replace(",", ""))
+    high_52_week = float(price.split("-")[1].strip()[1:].replace(",", ""))
+    return low_52_week, high_52_week
+
+
+
 def get_dataframe(ticker, exp_date_selected):
     while True:
         try:
@@ -282,7 +297,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             for price in current_market_price(ticker, exchange):
                 stock_ltp = price
                 break
-
+            low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
         # ********************************** MATRIX ******************************************
         l1, l2 = len(output_ce), len(output_pe)
         if l1 < l2:
@@ -304,6 +319,8 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
 
         # ************************************************************************************
     st.write(f'CMP:', stock_ltp)
+    st.write(f'52 week low:', low_52_week)
+    st.write(f'52 week high:', high_52_week)
     col1, col2, col3 = st.columns(3)
 
     with col1:
