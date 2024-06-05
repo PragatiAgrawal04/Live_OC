@@ -325,8 +325,33 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         st.write(f'52 week low:', low_52_week)
     with d3:
         st.write(f'52 week high:', high_52_week)
+
+        # Function to get filter bounds
+        # def get_bounds(column):
+        #     min_val = int(df[column].min())
+        #     max_val = int(df[column].max())
+        #     return min_val, max_val
+
+        filters = st.columns(4)
+        ls = []
+        n = 1
+        for column in df.columns:
+            # min_val, max_val = get_bounds(column)
+            with filters[n - 1]:
+                ls.append(st.selectbox(
+                    f'Filter {column}',
+                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    key='filter_list' + str(n) + "table" + str(table_number)
+
+                ))
+            n = n + 1
         
     col1, col2, col3 = st.columns(3)
+
+    df = df[(df['CE Premium%'] >= ls[0]) & (df['CE (Premium+SP)%'] >= ls[1]) & (df['PE Premium%'] >= ls[2]) & (df['PE (Premium+SP)%'] >= ls[3])]
+    df_index = df.index
+    output_ce = output_ce.loc[df_index]
+    output_pe = output_pe.loc[df_index]
 
     with col1:
         output_ce = output_ce.rename(columns={'strikePrice': 'Strike Price',
