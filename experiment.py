@@ -318,9 +318,14 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 2)
 
         # ************************************************************************************
-    st.write(f'CMP:', stock_ltp)
-    st.write(f'52 week low:', low_52_week)
-    st.write(f'52 week high:', high_52_week)
+    d1, d2, d3 = st.columns(3)
+    with d1:
+        st.write(f'CMP:', stock_ltp)
+    with d2:
+        st.write(f'52 week low:', low_52_week)
+    with d3:
+        st.write(f'52 week high:', high_52_week)
+        
     col1, col2, col3 = st.columns(3)
 
     with col1:
