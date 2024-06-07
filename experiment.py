@@ -15,7 +15,16 @@ TWO_PERCENT_MARKET_PRICE_CE = 0.0
 TWO_PERCENT_MARKET_PRICE_PE = 0.0
 
 exchange = "NSE"
-
+st.markdown("""
+        <style>
+               .block-container {
+                    padding-top: 1rem;
+                    padding-bottom: 0rem;
+                    padding-left: 5rem;
+                    padding-right: 5rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
 def last_thursdays(year):
     exp = []
