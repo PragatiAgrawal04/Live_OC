@@ -5,6 +5,7 @@ import time
 import xlwings as xw
 from bs4 import BeautifulSoup
 import datetime
+import pytz
 import streamlit as st
 import csv
 
@@ -315,13 +316,15 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,
                 2)
         # ************************************************************************************
-    d1, d2, d3 = st.columns(3)
+    d1, d2, d3, d4 = st.columns(4)
     with d1:
-        st.write(f'CMP:', stock_ltp)
+        st.markdown('##### CMP:  ' + str(stock_ltp))
     with d2:
-        st.write(f'52 week low:', low_52_week)
+        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
     with d3:
-        st.write(f'52 week high:', high_52_week)
+        st.markdown('##### 52 week low:  ' + str(low_52_week))
+    with d4:
+        st.markdown('##### 52 week high:  ' + str(high_52_week))
 
         # Function to get filter bounds
         # def get_bounds(column):
