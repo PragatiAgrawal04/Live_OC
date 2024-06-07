@@ -65,8 +65,6 @@ def current_market_price(ticker, exchange):
 
         time.sleep(5)
 
-
-
 def fifty_two_week_high_low(ticker, exchange):
     url = f"https://www.google.com/finance/quote/{ticker}:{exchange}"
 
@@ -78,7 +76,6 @@ def fifty_two_week_high_low(ticker, exchange):
     low_52_week = float(price.split("-")[0].strip()[1:].replace(",", ""))
     high_52_week = float(price.split("-")[1].strip()[1:].replace(",", ""))
     return low_52_week, high_52_week
-
 
 
 def get_dataframe(ticker, exp_date_selected):
@@ -298,6 +295,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 stock_ltp = price
                 break
             low_52_week, high_52_week = fifty_two_week_high_low(ticker, exchange)
+
         # ********************************** MATRIX ******************************************
         l1, l2 = len(output_ce), len(output_pe)
         if l1 < l2:
@@ -316,7 +314,6 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
             df.at[i, "PE (Premium+SP)%"] = round(
                 (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,
                 2)
-
         # ************************************************************************************
     d1, d2, d3 = st.columns(3)
     with d1:
@@ -332,27 +329,48 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         #     max_val = int(df[column].max())
         #     return min_val, max_val
 
-        filters = st.columns(4)
-        ls = []
-        n = 1
-        for column in df.columns:
-            # min_val, max_val = get_bounds(column)
-            with filters[n - 1]:
+    filters = st.columns(4)
+    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    ls = []
+    n=1
+    with filters[1]:
+        nested_filters = st.columns(2)
+        ind = 0
+        for column in df.columns.tolist()[:2]:
+            with nested_filters[ind]:
                 ls.append(st.selectbox(
-                    f'Filter {column}',
-                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                    key='filter_list' + str(n) + "table" + str(table_number)
+                                f'Filter {column}',
+                                values,
+                                key='filter_list' + str(n) + "table" + str(table_number)
 
-                ))
-            n = n + 1
-        
-    col1, col2, col3 = st.columns(3)
+                            ))
+                n += 1
+                ind += 1
+    with filters[3]:
+        nested_filters = st.columns(2)
+        ind = 0
+        for column in df.columns.tolist()[2:]:
+            with nested_filters[ind]:
+                ls.append(st.selectbox(
+                            f'Filter {column}',
+                            values,
+                            key='filter_list' + str(n) + "table" + str(table_number)
 
-    df = df[(df['CE Premium%'] >= ls[0]) & (df['CE (Premium+SP)%'] >= ls[1]) & (df['PE Premium%'] >= ls[2]) & (df['PE (Premium+SP)%'] >= ls[3])]
-    df_index = df.index
-    output_ce = output_ce.loc[df_index]
-    output_pe = output_pe.loc[df_index]
+                            ))
+                n += 1
+                ind += 1
 
+
+    col1, col2, col3, col4 = st.columns(4)
+    df_ce = df[['CE Premium%', 'CE (Premium+SP)%']]
+    df_pe = df[['PE Premium%', 'PE (Premium+SP)%']]
+    df_ce = df_ce[(df_ce['CE Premium%'] >= ls[0]) & (df_ce['CE (Premium+SP)%'] >= ls[1])]
+    df_pe = df_pe[(df_pe['PE Premium%'] >= ls[2]) & (df_pe['PE (Premium+SP)%'] >= ls[3])]
+    #df = df[(df['CE Premium%'] >= ls[0]) & (df['CE (Premium+SP)%'] >= ls[1]) & (df['PE Premium%'] >= ls[2]) & (df['PE (Premium+SP)%'] >= ls[3])]
+    df_ce_index = df_ce.index
+    output_ce = output_ce.loc[df_ce_index]
+    df_pe_index = df_pe.index
+    output_pe = output_pe.loc[df_pe_index]
     with col1:
         output_ce = output_ce.rename(columns={'strikePrice': 'Strike Price',
                                               'expiryDate': 'Expiry Date',
@@ -364,8 +382,18 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
         output_ce.columns = ['<div class="col_heading">'+col+'</div>' for col in output_ce.columns]
         st.write(output_ce.to_html(escape=False), unsafe_allow_html=True)
-
     with col2:
+        # df_ce = df[['CE Premium%', 'CE (Premium+SP)%']]
+        df_ce = df_ce.style.applymap(lambda val: highlight_ratio(val, 'CE Premium%'), subset=['CE Premium%'])
+        df_ce = df_ce.applymap(lambda val: highlight_ratio(val, 'CE (Premium+SP)%'), subset=['CE (Premium+SP)%'])
+        df_ce = df_ce.set_properties(
+            **{'text-align': 'center'}).set_table_styles(
+            [{'selector': 'th', 'props': [('text-align', 'center')]}])
+        df_ce = df_ce.format({'Last Price': "{:.2f}".format, 'Strike Price': "{:.1f}".format})
+        st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
+        df_ce.columns = ['<div class="col_heading">' + col + '</div>' for col in df_ce.columns]
+        st.write(df_ce.to_html(escape=False), unsafe_allow_html=True)
+    with col3:
         output_pe = output_pe.rename(columns={'strikePrice': 'Strike Price',
                                               'expiryDate': 'Expiry Date',
                                               'lastPrice': 'Last Price',
@@ -377,18 +405,29 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
         st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
         output_pe.columns = ['<div class="col_heading">' + col + '</div>' for col in output_pe.columns]
         st.write(output_pe.to_html(escape=False), unsafe_allow_html=True)
-    with col3:
-        df = df.style.applymap(lambda val: highlight_ratio(val, 'CE Premium%'), subset=['CE Premium%'])
-        df = df.applymap(lambda val: highlight_ratio(val, 'CE (Premium+SP)%'), subset=['CE (Premium+SP)%'])
-        df = df.applymap(lambda val: highlight_ratio(val, 'PE Premium%'), subset=['PE Premium%'])
-        df = df.applymap(lambda val: highlight_ratio(val, 'PE (Premium+SP)%'), subset=['PE (Premium+SP)%'])
-        df = df.format(formatter="{:.2f}".format)
-        df = df.set_properties(
+    with col4:
+        # df_pe = df[['PE Premium%', 'PE (Premium+SP)%']]
+        df_pe = df_pe.style.applymap(lambda val: highlight_ratio(val, 'PE Premium%'), subset=['PE Premium%'])
+        df_pe = df_pe.applymap(lambda val: highlight_ratio(val, 'PE (Premium+SP)%'), subset=['PE (Premium+SP)%'])
+        df_pe = df_pe.set_properties(
             **{'text-align': 'center'}).set_table_styles(
             [{'selector': 'th', 'props': [('text-align', 'center')]}])
+        df_pe = df_pe.format({'Last Price': "{:.2f}".format, 'Strike Price': "{:.1f}".format})
         st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
-        df.columns = ['<div class="col_heading">' + col + '</div>' for col in df.columns]
-        st.write(df.to_html(escape=False), unsafe_allow_html=True)
+        df_pe.columns = ['<div class="col_heading">' + col + '</div>' for col in df_pe.columns]
+        st.write(df_pe.to_html(escape=False), unsafe_allow_html=True)
+
+        # df = df.style.applymap(lambda val: highlight_ratio(val, 'CE Premium%'), subset=['CE Premium%'])
+        # df = df.applymap(lambda val: highlight_ratio(val, 'CE (Premium+SP)%'), subset=['CE (Premium+SP)%'])
+        # df = df.applymap(lambda val: highlight_ratio(val, 'PE Premium%'), subset=['PE Premium%'])
+        # df = df.applymap(lambda val: highlight_ratio(val, 'PE (Premium+SP)%'), subset=['PE (Premium+SP)%'])
+        # df = df.format(formatter="{:.2f}".format)
+        # df = df.set_properties(
+        #     **{'text-align': 'center'}).set_table_styles(
+        #     [{'selector': 'th', 'props': [('text-align', 'center')]}])
+        # st.markdown('<style>.col_heading{text-align: center}</style>', unsafe_allow_html=True)
+        # df.columns = ['<div class="col_heading">' + col + '</div>' for col in df.columns]
+        # st.write(df.to_html(escape=False), unsafe_allow_html=True)
 
     if ('share_list2' in st.session_state) and ('share_list3' in st.session_state):
         curr = pd.DataFrame({'table1': [st.session_state["share_list1"]],
