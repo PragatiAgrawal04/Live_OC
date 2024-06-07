@@ -294,10 +294,11 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     #         date_list.append(exp_date_list[i].strftime('%d-%m-%Y'))
     c1, c2 = st.columns(2)
     with c1:
-        selected_option = st.selectbox("Share List", share_list, key="share_list" + str(table_number))
-        lot_size = shares[shares["Symbol"] == selected_option]['Jun-24'].item()
+        st.markdown('##### Share List')
+        selected_option = st.selectbox(label="", options=share_list, key="share_list" + str(table_number), label_visibility='collapsed')
     with c2:
-        exp_option = st.selectbox("Expiry Date", exp_date_list_sel, key="exp_list" + str(table_number))
+        st.markdown('##### Expiry List')
+        exp_option = st.selectbox(label="", options=exp_date_list_sel, key="exp_list" + str(table_number), label_visibility='collapsed')
         if selected_option in share_list:
             ticker = selected_option
             output_ce, output_pe = get_dataframe(ticker, exp_option)
