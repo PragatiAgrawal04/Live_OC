@@ -327,16 +327,18 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,
                 2)
         # ************************************************************************************
-    d1, d2, d3, d4, d5 = st.columns(5)
+    d1, d2, d3, d4, d5, d6 = st.columns(6)
     with d1:
         st.markdown('##### CMP:  ' + str(stock_ltp))
     with d2:
         st.markdown('##### Lot Size:  ' + str(lot_size))
     with d3:
-        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
+        st.markdown('##### Contract Value:  ' + str(lot_size*stock_ltp))
     with d4:
-        st.markdown('##### 52 week low:  ' + str(low_52_week))
+        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
     with d5:
+        st.markdown('##### 52 week low:  ' + str(low_52_week))
+    with d6:
         st.markdown('##### 52 week high:  ' + str(high_52_week))
 
         # Function to get filter bounds
