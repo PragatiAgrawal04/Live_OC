@@ -295,6 +295,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     c1, c2 = st.columns(2)
     with c1:
         selected_option = st.selectbox("Share List", share_list, key="share_list" + str(table_number))
+        lot_size = shares[shares["Symbol"] == selected_option]['Jun-24'].item()
     with c2:
         exp_option = st.selectbox("Expiry Date", exp_date_list_sel, key="exp_list" + str(table_number))
         if selected_option in share_list:
@@ -326,14 +327,16 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
                 (((stock_ltp - output_pe["strikePrice"].iloc[i]) + output_pe["lastPrice"].iloc[i]) / stock_ltp) * 100,
                 2)
         # ************************************************************************************
-    d1, d2, d3, d4 = st.columns(4)
+    d1, d2, d3, d4, d5 = st.columns(5)
     with d1:
         st.markdown('##### CMP:  ' + str(stock_ltp))
     with d2:
-        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
+        st.markdown('##### Lot Size:  ' + str(lot_size))
     with d3:
-        st.markdown('##### 52 week low:  ' + str(low_52_week))
+        st.markdown('##### Time:  ' + datetime.datetime.now(pytz.timezone('Asia/Kolkata')).strftime("%H:%M:%S"))
     with d4:
+        st.markdown('##### 52 week low:  ' + str(low_52_week))
+    with d5:
         st.markdown('##### 52 week high:  ' + str(high_52_week))
 
         # Function to get filter bounds
