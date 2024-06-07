@@ -296,6 +296,7 @@ def frag_table(table_number, selected_option='UBL', exp_option=EXP_OPTION):
     with c1:
         st.markdown('##### Share List')
         selected_option = st.selectbox(label="", options=share_list, key="share_list" + str(table_number), label_visibility='collapsed')
+        lot_size = shares[shares["Symbol"] == selected_option]['Jun-24'].item()
     with c2:
         st.markdown('##### Expiry List')
         exp_option = st.selectbox(label="", options=exp_date_list_sel, key="exp_list" + str(table_number), label_visibility='collapsed')
